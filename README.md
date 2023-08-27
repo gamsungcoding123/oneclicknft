@@ -32,7 +32,7 @@ class NFTMinter {
 module.exports = NFTMinter;
 ```
 
-# Usage
+## Usage
 ```
 const NFTMinter = require('./nftMinter');
 const YOUR_CONTRACT_ABI = []; // Your NFT contract ABI here
@@ -48,4 +48,56 @@ async function main() {
 
 main().catch(console.error);
 
+```
+# Get NFT Owner
+```
+// Add these functions inside the NFTMinter class:
+
+async getOwnerOf(tokenId) {
+    try {
+        return await this.contract.methods.ownerOf(tokenId).call();
+    } catch (error) {
+        console.error("Error fetching owner:", error);
+        return null;
+    }
+}
+```
+# Get Metadata
+```
+async getMetadataURI(tokenId) {
+    try {
+        return await this.contract.methods.tokenURI(tokenId).call();
+    } catch (error) {
+        console.error("Error fetching metadata URI:", error);
+        return null;
+    }
+}
+```
+## Usage
+```
+const NFTMinter = require('./nftMinter');
+const YOUR_CONTRACT_ABI = []; // Your NFT contract ABI here
+const YOUR_CONTRACT_ADDRESS = "0x..."; // Your NFT contract address here
+
+const minter = new NFTMinter("YOUR_RPC_URL", YOUR_CONTRACT_ABI, YOUR_CONTRACT_ADDRESS);
+
+// Example usage
+async function main() {
+    const tokenId = "YOUR_DESIRED_TOKEN_ID";
+
+    // 1. Mint an NFT
+    // NOTE: NEVER use private keys directly in code. This is just for demonstration purposes.
+    const result = await minter.mintNFT('FROM_ADDRESS', 'TO_ADDRESS', tokenId, 'PRIVATE_KEY');
+    console.log("Transaction Hash:", result.transactionHash);
+
+    // 2. Get owner of the NFT
+    const owner = await minter.getOwnerOf(tokenId);
+    console.log(`Owner of token ${tokenId} is: ${owner}`);
+
+    // 3. Get metadata URI of the NFT
+    const metadataURI = await minter.getMetadataURI(tokenId);
+    console.log(`Metadata URI of token ${tokenId} is: ${metadataURI}`);
+}
+
+main().catch(console.error);
 ```
